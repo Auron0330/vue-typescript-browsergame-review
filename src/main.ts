@@ -9,8 +9,8 @@ import { RouteRecordRaw, createWebHistory, createRouter } from "vue-router";
 // import createRouter from "vue-router";
 
 // トップページとゲームページを読み込む
-import TopPage from "./components/TopPage.vue";
-import PlayPage from "./components/PlayPage.vue";
+import TopPage from "./pages/TopPage.vue";
+import PlayPage from "./pages/PlayPage.vue";
 
 // 各画面のルーティング情報を記述する
 const routes: Array<RouteRecordRaw> = [
