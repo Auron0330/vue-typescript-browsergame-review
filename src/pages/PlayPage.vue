@@ -5,63 +5,6 @@ import { Field } from '../common/Field'
 
 import TetrominoPreviewComponent from '../components/TetrominoPreviewComponent.vue'
 
-const onKeyDown = (e: KeyboardEvent) => {
-  switch (e.key) {
-    case " ": {
-      const nextRotate = (tetromino.rotate + 1) % 4;
-      const data = Tetromino.rotate(nextRotate, tetromino.current.data)
-      if (tetris.field.canMove(data, tetromino.position)) {
-        tetromino.rotate = nextRotate
-      }
-    }
-      break;
-    case "Down":
-    case "ArrowDown":
-      if(canDropCurrentTetromino()) {
-        tetromino.position.y++;
-        resetDrop();
-      } else {
-        nextTetrisField();
-      }
-      break;
-    case "Up":
-    case "ArrowUp":
-      while(canDropCurrentTetromino()) {
-        tetromino.position.y++;
-        resetDrop();
-      }
-      nextTetrisField()
-      break;
-    case "Left":
-    case "ArrowLeft": {
-      const data = tetromino.current.data
-      const { x, y } = tetromino.position
-      const leftPosition = {x: x - 1, y};
-      if(tetris.field.canMove(data, leftPosition)) {
-        tetromino.position.x--;
-      }
-    }
-      break;
-    case "Right":
-    case "ArrowRight": {
-      const data = tetromino.current.data
-      const { x, y } = tetromino.position
-      const rightPosition = {x: x + 1, y};
-      if(tetris.field.canMove(data, rightPosition)) {
-        tetromino.position.x++;
-      }
-    }
-      break;
-  }
-}
-
-onMounted(function() {
-  document.addEventListener('keydown', onKeyDown)
-})
-onBeforeUnmount(function() {
-  document.removeEventListener('keydown', onKeyDown)
-})
-
 let staticField = new Field();
 const tetris = reactive({ field: new Field() });
 const tetromino = reactive({
@@ -119,6 +62,63 @@ const nextTetrisField = () => {
   tetromino.rotate = 0;
   tetromino.position = { x: 3, y: 0 };
 }
+
+const onKeyDown = (e: KeyboardEvent) => {
+  switch (e.key) {
+    case " ": {
+      const nextRotate = (tetromino.rotate + 1) % 4;
+      const data = Tetromino.rotate(nextRotate, tetromino.current.data)
+      if (tetris.field.canMove(data, tetromino.position)) {
+        tetromino.rotate = nextRotate
+      }
+    }
+      break;
+    case "Down":
+    case "ArrowDown":
+      if(canDropCurrentTetromino()) {
+        tetromino.position.y++;
+        resetDrop();
+      } else {
+        nextTetrisField();
+      }
+      break;
+    case "Up":
+    case "ArrowUp":
+      while(canDropCurrentTetromino()) {
+        tetromino.position.y++;
+        resetDrop();
+      }
+      nextTetrisField()
+      break;
+    case "Left":
+    case "ArrowLeft": {
+      const data = tetromino.current.data
+      const { x, y } = tetromino.position
+      const leftPosition = {x: x - 1, y};
+      if(tetris.field.canMove(data, leftPosition)) {
+        tetromino.position.x--;
+      }
+    }
+      break;
+    case "Right":
+    case "ArrowRight": {
+      const data = tetromino.current.data
+      const { x, y } = tetromino.position
+      const rightPosition = {x: x + 1, y};
+      if(tetris.field.canMove(data, rightPosition)) {
+        tetromino.position.x++;
+      }
+    }
+      break;
+  }
+}
+
+onMounted(function() {
+  document.addEventListener('keydown', onKeyDown)
+})
+onBeforeUnmount(function() {
+  document.removeEventListener('keydown', onKeyDown)
+})
 
 const resetDropInterval = () => {
   let intervalId = -1;
