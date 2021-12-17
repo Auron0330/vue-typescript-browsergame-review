@@ -6,7 +6,10 @@ import { Field } from '../common/Field'
 import TetrominoPreviewComponent from '../components/TetrominoPreviewComponent.vue'
 
 let staticField = new Field();
-const tetris = reactive({ field: new Field() });
+const tetris = reactive({
+  field: new Field(),
+  score: 0
+});
 const tetromino = reactive({
   current: Tetromino.random(),
   position: { x: 3, y: 0 },
@@ -53,8 +56,9 @@ const nextTetrisField = () => {
   const position = tetromino.position;
 
   tetris.field.update(data, position);
+  const { field, score } = deleteLine()
 
-  staticField = new Field(tetris.field.data);
+  staticField = new Field(field)
   tetris.field = Field.deepCopy(staticField);
 
   tetromino.current = tetromino.next;
@@ -92,7 +96,7 @@ const onKeyDown = (e: KeyboardEvent) => {
       break;
     case "Left":
     case "ArrowLeft": {
-      const data = tetromino.current.data
+      const data = currentTetrominoData()
       const { x, y } = tetromino.position
       const leftPosition = {x: x - 1, y};
       if(tetris.field.canMove(data, leftPosition)) {
@@ -102,7 +106,7 @@ const onKeyDown = (e: KeyboardEvent) => {
       break;
     case "Right":
     case "ArrowRight": {
-      const data = tetromino.current.data
+      const data = currentTetrominoData()
       const { x, y } = tetromino.position
       const rightPosition = {x: x + 1, y};
       if(tetris.field.canMove(data, rightPosition)) {
@@ -119,6 +123,23 @@ onMounted(function() {
 onBeforeUnmount(function() {
   document.removeEventListener('keydown', onKeyDown)
 })
+
+const deleteLine = () => {
+  let score = 0;
+  const field = tetris.field.data.filter((row) => {
+    if (row.every(col => col > 0)) {
+      score++;
+      return false;
+    }
+    return true;
+  });
+
+  for (let i = 0; i < score; i++) {
+    field.unshift(new Array(field[0].length).fill(0));
+  }
+
+  return { score, field };
+};
 
 const resetDropInterval = () => {
   let intervalId = -1;
@@ -161,6 +182,9 @@ resetDrop();
     </div>
     <div class="information">
       <TetrominoPreviewComponent v-bind:tetromino="tetromino.next.data"/>
+      <ul class="data">
+        <li>スコア: {{ tetris.score }}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -212,7 +236,15 @@ resetDrop();
 
 /** テトリスに関する情報をテトリスのフィールドの右に表示する **/
 .information {
+  position: relative;
   margin-left: 0.5em;
-}
 
+  ul.data {
+    list-style: none;
+    position: absolute;
+    font-size: 1.3em;
+    padding-left: 0;
+    bottom: 0;
+  }
+}
 </style>
