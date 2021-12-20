@@ -60,6 +60,7 @@ const nextTetrisField = () => {
 
   staticField = new Field(field)
   tetris.field = Field.deepCopy(staticField);
+  tetris.score += score
 
   tetromino.current = tetromino.next;
   tetromino.next = Tetromino.random();
@@ -120,9 +121,6 @@ const onKeyDown = (e: KeyboardEvent) => {
 onMounted(function() {
   document.addEventListener('keydown', onKeyDown)
 })
-onBeforeUnmount(function() {
-  document.removeEventListener('keydown', onKeyDown)
-})
 
 const deleteLine = () => {
   let score = 0;
@@ -140,6 +138,10 @@ const deleteLine = () => {
 
   return { score, field };
 };
+
+onBeforeUnmount(function() {
+  document.removeEventListener('keydown', onKeyDown)
+})
 
 const resetDropInterval = () => {
   let intervalId = -1;
@@ -194,7 +196,7 @@ resetDrop();
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 
 .field {
